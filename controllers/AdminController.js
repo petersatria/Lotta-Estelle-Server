@@ -12,7 +12,6 @@ class AdminController {
         data: { id: data.id, firstName, lastName, email, role: data.role }
       })
     } catch (err) {
-      console.log(err);
       next(err)
     }
   }
