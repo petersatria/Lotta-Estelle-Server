@@ -16,10 +16,38 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Transaction.init({
-    date: DataTypes.DATE,
-    status: DataTypes.STRING,
-    totalPrice: DataTypes.INTEGER,
-    UserId: DataTypes.INTEGER
+    date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Date is required' },
+        notEmpty: { msg: 'Date is required' }
+      }
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Status is required' },
+        notEmpty: { msg: 'Status is required' }
+      }
+    },
+    totalPrice: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Total price is required' },
+        notEmpty: { msg: 'Total price is required' }
+      }
+    },
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'User id is required' },
+        notEmpty: { msg: 'User id is required' }
+      }
+    },
   }, {
     sequelize,
     modelName: 'Transaction',

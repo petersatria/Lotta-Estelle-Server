@@ -29,14 +29,6 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      size: {
-        type: Sequelize.JSON,
-        allowNull: false,
-      },
-      stock: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
       imgUrl: {
         type: Sequelize.STRING,
         allowNull: false,

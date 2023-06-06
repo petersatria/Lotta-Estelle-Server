@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Product.belongsToMany(models.Transaction, { through: models.TransactionProduct })
       Product.hasMany(models.TransactionProduct)
+      Product.hasMany(models.SizeProduct)
     }
   }
   Product.init({
@@ -48,22 +49,6 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     discount: DataTypes.INTEGER,
-    size: {
-      type: DataTypes.ARRAY,
-      allowNull: false,
-      validate: {
-        notNull: { msg: 'Size is required' },
-        notEmpty: { msg: 'Size is required' }
-      }
-    },
-    stock: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: { msg: 'Stock is required' },
-        notEmpty: { msg: 'Stock is required' }
-      }
-    },
     imgUrl: {
       type: DataTypes.STRING,
       allowNull: false,
