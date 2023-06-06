@@ -3,8 +3,7 @@ const router = require('express').Router()
 router
   .get('/products')
   .post('/products')
-  .get('/products/:id')
   .put('/products/:id')
-  .delete('/carts')
+  .delete('/products/:id')
 
 module.exports = router
