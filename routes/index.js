@@ -9,7 +9,7 @@ router
   .post('/api/register', CustomerController.register)
   .post('/api/login', CustomerController.login)
   .use('/api', require('./customer'))
-  .use('/', require('./admin'))
+  .use('/admin', require('./admin'))
   .use(errorHandler)
 
 module.exports = router
