@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const JWT_SECRET = 'secretforjwt'
+const { JWT_SECRET } = process.env
 
 module.exports = {
   signToken: (payload) => {

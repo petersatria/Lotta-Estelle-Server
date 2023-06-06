@@ -7,8 +7,9 @@ router
   .get('/products', CustomerController.products)
   .get('/products/:id', CustomerController.productById)
   .use(authentication)
-  .get('/carts', CustomerController.carts)
-  .post('/carts/:ProductId')
+  .post('/transactions', CustomerController.checkout)
+  .post('/generate-midtrans-token', CustomerController.generateMidtransToken)
+  // .post('/carts/:ProductId')
   .patch('/transactions/:id')
 
 module.exports = router

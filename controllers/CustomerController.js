@@ -1,6 +1,7 @@
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
 const { User, Product, SizeProduct, Transaction, TransactionProduct } = require('../models')
+const midtransClient = require('midtrans-client');
 
 class CustomerController {
   static async register(req, res, next) {
@@ -29,7 +30,7 @@ class CustomerController {
       const isValidPassword = comparePassword(password, data.password)
       if (!isValidPassword) throw { name: 'EmailPasswordInvalid' }
 
-      const access_token = signToken({ id: data.id })
+      const access_token = signToken({ id: data.id, role: data.role })
       res.status(200).json({
         message: 'Success to login', access_token, id: data.id,
         role: data.role
@@ -81,27 +82,88 @@ class CustomerController {
   //     next(err)
   //   }
   // }
-  static async carts(req, res, next) {
+  // static async carts(req, res, next) {
+  //   try {
+  //     const { id } = req.user
+  //     const data = await TransactionProduct.findAll({
+  //       include: [{
+  //         model: Transaction,
+  //         attributes: { exclude: ['createdAt', 'updatedAt'] },
+  //         where: { UserId: id },
+  //       }, {
+  //         model: Product,
+  //         attributes: { exclude: ['createdAt', 'updatedAt'] }
+  //       }
+  //       ],
+  //       // include: [{
+  //       //   model: Product,
+  //       //   attributes: { exclude: ['createdAt', 'updatedAt'] }
+  //       // }]
+  //     })
+  //     res.status(200).json({ message: 'Success get data', data })
+  //   } catch (err) {
+  //     next(err)
+  //   }
+  // }
+
+  static async checkout(req, res, next) {
     try {
       const { id } = req.user
-      const data = await TransactionProduct.findAll({
-        include: [{
-          model: Transaction,
-          attributes: { exclude: ['createdAt', 'updatedAt'] },
-          where: { UserId: id },
-        }, {
-          model: Product,
-          attributes: { exclude: ['createdAt', 'updatedAt'] }
-        }
-        ],
-        // include: [{
-        //   model: Product,
-        //   attributes: { exclude: ['createdAt', 'updatedAt'] }
-        // }]
+      const { carts } = req.body
+
+      let totalPrice = 0
+      carts.forEach(e => totalPrice += e.price)
+      const transaction = await Transaction.create({
+        date: new Date(), status: 'Unpaid', totalPrice, UserId: id
       })
-      res.status(200).json({ message: 'Success get data', data })
+
+      let arr = carts.map(e => {
+        return {
+          ProductId: e.id,
+          TransactionId: transaction.id
+        }
+      })
+      await TransactionProduct.bulkCreate(arr)
+
+      res.status(201).json({ message: 'Success checkout product', carts })
     } catch (err) {
       next(err)
+    }
+  }
+
+  static async generateMidtransToken(req, res, next) {
+    try {
+      const { TransactionId } = req.body
+
+      const transaction = await Transaction.findByPk(TransactionId)
+      const user = await User.findByPk(req.user.id)
+      let snap = new midtransClient.Snap({
+        // Set to true if you want Production Environment (accept real transaction).
+        isProduction: false,
+        serverKey: process.env.MIDTRANS_SERVER_KEY
+      });
+
+      let parameter = {
+        "transaction_details": {
+          "order_id": `ORDERID-${new Date().getTime()}`,
+          "gross_amount": transaction.totalPrice
+        },
+        "credit_card": {
+          "secure": true
+        },
+        "customer_details": {
+          "first_name": user.firstName,
+          "last_name": user.lastName,
+          "email": user.email,
+          "phone": user.phoneNumber
+        }
+      };
+
+      const midtransToken = await snap.createTransaction(parameter)
+      console.log(midtransToken);
+      res.status(201).json(midtransToken)
+    } catch (err) {
+      console.log(err);
     }
   }
 }
