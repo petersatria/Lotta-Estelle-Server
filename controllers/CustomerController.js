@@ -1,6 +1,6 @@
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
-const { User } = require('../models')
+const { User, Product, SizeProduct, Transaction, TransactionProduct } = require('../models')
 
 class CustomerController {
   static async register(req, res, next) {
@@ -34,6 +34,72 @@ class CustomerController {
         message: 'Success to login', access_token, id: data.id,
         role: data.role
       })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  static async products(req, res, next) {
+    try {
+      const data = await Product.findAll({
+        include: [{
+          model: SizeProduct,
+          attributes: { exclude: ['createdAt', 'updatedAt'] }
+        }],
+        order: [['updatedAt', 'DESC']]
+      })
+      res.status(200).json({ message: 'Success get data', data })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  static async productById(req, res, next) {
+    try {
+      const { id } = req.params
+
+      const data = await Product.findByPk(id, {
+        include: [{
+          model: SizeProduct,
+          attributes: { exclude: ['createdAt', 'updatedAt'] }
+        }]
+      })
+      res.status(200).json({ message: 'Success get data', data })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  // static async carts(req, res, next) {
+  //   try {
+  //     const { id } = req.user
+  //     const data = await Transaction.findAll({
+  //       where: { UserId: id }
+  //     })
+  //     res.status(200).json({ message: 'Success get data', data })
+  //   } catch (err) {
+  //     next(err)
+  //   }
+  // }
+  static async carts(req, res, next) {
+    try {
+      const { id } = req.user
+      const data = await TransactionProduct.findAll({
+        include: [{
+          model: Transaction,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          where: { UserId: id },
+        }, {
+          model: Product,
+          attributes: { exclude: ['createdAt', 'updatedAt'] }
+        }
+        ],
+        // include: [{
+        //   model: Product,
+        //   attributes: { exclude: ['createdAt', 'updatedAt'] }
+        // }]
+      })
+      res.status(200).json({ message: 'Success get data', data })
     } catch (err) {
       next(err)
     }
