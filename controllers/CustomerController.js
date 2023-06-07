@@ -1,5 +1,7 @@
+const { uploader, cloudinary } = require("../config/cloudinaryConfig");
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
+const { dataUri } = require("../middlewares/multer");
 const { User, Product, SizeProduct, Transaction, TransactionProduct } = require('../models')
 const midtransClient = require('midtrans-client');
 
@@ -217,7 +219,15 @@ class CustomerController {
         .catch(err => { throw err })
 
     } catch (err) {
-      console.log(err);
+      next(err)
+    }
+  }
+
+  static async upload(req, res, next) {
+    try {
+      const result = await cloudinary.uploader.upload(req.file.path)
+      res.status(200).json(result)
+    } catch (err) {
       next(err)
     }
   }
