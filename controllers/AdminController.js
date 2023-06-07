@@ -1,3 +1,4 @@
+const { cloudinary } = require("../config/cloudinaryConfig")
 const { User, Product, SizeProduct } = require('../models')
 
 class AdminController {
@@ -18,9 +19,10 @@ class AdminController {
 
   static async createProduct(req, res, next) {
     try {
-      const { name, title, description, price, discount, imgUrl, categoryName } = req.body
+      const { name, title, description, price, discount, categoryName } = req.body
+      const image = await cloudinary.uploader.upload(req.file.path)
       const data = await Product.create({
-        name, title, description, price, discount: discount || 0, imgUrl, categoryName
+        name, title, description, price, discount: discount || 0, imgUrl: image.secure_url, categoryName
       })
 
       res.status(201).json({ message: 'Success create product', data })
