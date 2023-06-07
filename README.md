@@ -1,3 +1,501 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11188038&assignment_repo_type=AssignmentRepo)
-# fsjs-p2-v3-iproject-server
-Individual Project - Server
+## Endpoint Admin
+
+- GET /admin/products
+- GET /admin/products/size
+- POST /admin/products
+- POST /admin/products/size
+- PUT /admin/products/:id
+- PUT /admin/products/size/:id
+
+## Endpoint Public Api
+
+- POST /api/register
+- POST /api/login
+- GET /api/products
+- GET /api/products/:id
+- POST /api/transactions
+- PATCH /api/transactions/:id
+
+# Endpoint Admin
+
+## 1. POST /admin/products
+
+- Description : create a new product
+
+### Request
+
+- request headers
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlh"
+}
+```
+
+- request body
+
+```json
+{
+  "name": "praesent",
+  "title": "praesent",
+  "description": "Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices.",
+  "imgUrl": "http://dummyimage.com/233x100.png/5fa2dd/ffffff",
+  "price": 1000000,
+  "categoryName": "Shirt"
+}
+```
+
+### Response
+
+- Response (201) - Success created an product
+
+```json
+{
+  "message": "Success create product",
+  "data": {
+    "id": 22,
+    "name": "test multer 2",
+    "title": "test multer 2",
+    "description": "test multer",
+    "price": 99999,
+    "discount": 0,
+    "imgUrl": "https://res.cloudinary.com/dwl97wtt2/image/upload/v1686151172/b4ju0umehmi4pywsygbg.jpg",
+    "categoryName": "Shirt",
+    "updatedAt": "2023-06-07T15:19:34.023Z",
+    "createdAt": "2023-06-07T15:19:34.023Z"
+  }
+}
+```
+
+- Response (400) - Failed created an product
+
+```json
+{
+  "message" : "Name is required"
+}
+OR
+{
+  "message" : "Title is required"
+}
+OR
+{
+  "message" : "Description is required"
+}
+OR
+{
+  "message" : "Price is required"
+}
+OR
+{
+  "message" : "imgUrl is required"
+}
+OR
+{
+  "message" : "Category is required"
+}
+```
+
+## 2. GET /admin/products
+
+- Description : get all products
+
+### Request
+
+- request headers
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlh"
+}
+```
+
+### Response
+
+- Response (200) - Success get data products
+
+```json
+{
+    "message": "Success get data",
+    "data": [
+        {
+            "id": 35,
+            "name": "pellentesque eget nunc",
+            "title": "vel augue vestibulum ante ipsum primis in faucibus orci luctus et",
+            "description": "Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.\n\nInteger tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",
+            "price": 155176,
+            "discount": 0,
+            "imgUrl": "https://adidas.co.id/media/catalog/product/h/z/hz4154_2_apparel_photography_front20center20view_grey.jpg",
+            "categoryName": "Bottoms",
+            "createdAt": "2023-06-07T22:08:51.581Z",
+            "updatedAt": "2023-06-07T22:08:51.581Z",
+            "SizeProducts": []
+        },
+ ...
+ ]
+}
+```
+
+## 3. GET /admin/products/size
+
+- Description : get all size
+
+### Request
+
+- request headers
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlh"
+}
+```
+
+### Response
+
+- Response (200) - Success get all size
+
+```json
+{
+    "message": "Success get data",
+    "data": [
+        {
+            "id": 3,
+            "size": "M",
+            "stock": 7,
+            "ProductId": 1,
+            "createdAt": "2023-06-07T08:36:55.720Z",
+            "updatedAt": "2023-06-07T08:36:55.720Z"
+        },
+        {
+            "id": 4,
+            "size": "L",
+            "stock": 4,
+            "ProductId": 1,
+            "createdAt": "2023-06-07T08:36:55.720Z",
+            "updatedAt": "2023-06-07T08:36:55.720Z"
+        },
+        ...
+    ]
+}
+```
+
+- Response (404) - Data not found
+
+```json
+{
+  "message": "Data is not found"
+}
+```
+
+## 4. PUT /admin/products/:id
+
+- Description : create product
+
+### Request
+
+- request headers
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlh"
+}
+```
+
+- request body
+
+````json
+{
+  "name": "praesent",
+  "title": "praesent",
+  "description": "Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices.",
+  "imgUrl": "http://dummyimage.com/233x100.png/5fa2dd/ffffff",
+  "price": 1000000,
+  "categoryName": "Shirt"
+}
+
+### Response
+
+- Response (200) - Success update product
+
+```json
+{
+  "message": "Success update product"
+}
+````
+
+- Response (404) - Product not found
+
+```json
+{
+  "message": "Data is not found"
+}
+```
+
+# Endpoint Public Api
+
+## 1. POST /api/register
+
+- Description : create a new user account
+
+### Request
+
+- request body
+
+```json
+{
+  "firstName": "admintest",
+  "lastName": "admintest",
+  "phoneNumber": "admintest",
+  "address": "admintest",
+  "email": "admin@test.com",
+  "password": "admintest"
+}
+```
+
+### Response
+
+- Response (201) - Success registered user
+
+```json
+{
+  "message": "Success registered user",
+  "data": {
+    "id": 11,
+    "role": "Admin"
+  }
+}
+```
+
+- Response (400) - Failed create account
+
+```json
+{
+   "message": "Email is required"
+}
+OR
+{
+   "message": "Password is required"
+}
+```
+
+## 2. POST /api/login
+
+- Description : login the user with their account
+
+### Response
+
+- Response (200) - Success to login
+
+```json
+{
+  "message": "Success to login",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjg0MjQ3MzA5fQ.wKWMyOpWjhyJHOeRSCc0wraOqdMHqpvT9invZr_38gs",
+  "username": "mbartolomeu0",
+  "role": "Customer"
+}
+```
+
+- Response (400) - Failed login because of empty input
+
+```json
+{
+  "message": "Email / password is required"
+}
+```
+
+- Response (401) - Invalid user credentials
+
+```json
+{
+  "message": "Email / password is incorrect"
+}
+```
+
+## 3. GET /api/products
+
+- Description : get all products
+
+### Response
+
+- Response (200) - Success get data products
+
+```json
+{
+ "message": "Success get data",
+ "data": [
+     {
+            "id": 35,
+            "name": "pellentesque eget nunc",
+            "title": "vel augue vestibulum ante ipsum primis in faucibus orci luctus et",
+            "description": "Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.\n\nInteger tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",
+            "price": 155176,
+            "discount": 0,
+            "imgUrl": "https://adidas.co.id/media/catalog/product/h/z/hz4154_2_apparel_photography_front20center20view_grey.jpg",
+            "categoryName": "Bottoms",
+            "createdAt": "2023-06-07T22:08:51.581Z",
+            "updatedAt": "2023-06-07T22:08:51.581Z",
+            "SizeProducts": []
+        },
+ ...
+ ]
+}
+```
+
+## 4. GET /api/products/:id
+
+- Description : get an product by id
+
+### Response
+
+- Response (200) - Success get an product
+
+```json
+{
+  "message": "Success get data",
+  "data": {
+    "id": 1,
+    "name": "porttitor lacus at",
+    "title": "justo in blandit ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing",
+    "description": "Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.",
+    "price": 394684,
+    "discount": 0,
+    "imgUrl": "http://dummyimage.com/175x100.png/cc0000/ffffff",
+    "categoryName": "Dresses",
+    "createdAt": "2023-06-07T08:36:55.707Z",
+    "updatedAt": "2023-06-07T08:36:55.707Z",
+    "SizeProducts": [
+      {
+        "id": 3,
+        "size": "M",
+        "stock": 7,
+        "ProductId": 1
+      },
+      {
+        "id": 4,
+        "size": "L",
+        "stock": 4,
+        "ProductId": 1
+      },
+      ...
+    ]
+  }
+}
+```
+
+- Response (404) - product not found
+
+```json
+{
+  "message": "Data is not found"
+}
+```
+
+## 5. PATCH /api/transactions/:id
+
+- Description : paid and decrement stock
+
+### Request
+
+- request headers
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlh"
+}
+```
+
+### Response
+
+- Response (200) - Success paid and decrement stock
+
+```json
+{
+  "message": "Success paid",
+  "data": [
+    {
+      "id": 1,
+      "size": "1",
+      "qty": "1",
+      "ProductId": 1,
+      "TransactionId": 2,
+      "createdAt": "2023-06-07T09:21:39.530Z",
+      "updatedAt": "2023-06-07T09:21:39.530Z"
+    },
+    {
+      "id": 2,
+      "size": "2",
+      "qty": "1",
+      "ProductId": 1,
+      "TransactionId": 2,
+      "createdAt": "2023-06-07T09:21:39.530Z",
+      "updatedAt": "2023-06-07T09:21:39.530Z"
+    }
+  ]
+}
+```
+
+## 6. POST /api/transactions
+
+- Description : create transaction
+
+### Request
+
+- request headers
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlh"
+}
+```
+
+- request body
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "price": 50000,
+      "size": "XL",
+      "qty": 9
+    },
+    {
+      "id": 2,
+      "price": 150000,
+      "size": "L",
+      "qty": 9
+    }
+  ]
+}
+```
+
+### Response
+
+- Response (201) - Success create transaction
+
+```json
+{
+  "message": "Success checkout product",
+  "midtransToken": "adtg2t2ty4y4",
+  "transaction": {
+    "id": 1
+  }
+}
+```
+
+## Global Errors
+
+- Response (401) - Unauthenticated
+
+```json
+{
+  "message": "Unauthenticated"
+}
+```
+
+- Response (500) - Internal Server Error
+
+```json
+{
+  "message": "Internal Server Error"
+}
+```
