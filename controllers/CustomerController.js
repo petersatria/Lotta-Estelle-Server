@@ -110,23 +110,52 @@ class CustomerController {
     try {
       const { id } = req.user
       const { carts } = req.body
+      console.log(carts);
 
       let totalPrice = 0
-      carts.forEach(e => totalPrice += e.price)
+      carts.forEach(e => totalPrice += e.subtotal)
       const transaction = await Transaction.create({
         date: new Date(), status: 'Unpaid', totalPrice, UserId: id
       })
 
       let arr = carts.map(e => {
         return {
+          size: e.size,
+          qty: e.qty,
           ProductId: e.id,
           TransactionId: transaction.id
         }
       })
       await TransactionProduct.bulkCreate(arr)
 
-      res.status(201).json({ message: 'Success checkout product', carts })
+      const user = await User.findByPk(req.user.id)
+      let snap = new midtransClient.Snap({
+        // Set to true if you want Production Environment (accept real transaction).
+        isProduction: false,
+        serverKey: process.env.MIDTRANS_SERVER_KEY
+      });
+
+      let parameter = {
+        "transaction_details": {
+          "order_id": `ORDERID-${new Date().getTime()}`,
+          "gross_amount": totalPrice
+        },
+        "credit_card": {
+          "secure": true
+        },
+        "customer_details": {
+          "first_name": user.firstName,
+          "last_name": user.lastName,
+          "email": user.email,
+          "phone": user.phoneNumber
+        }
+      };
+
+      const midtransToken = await snap.createTransaction(parameter)
+
+      res.status(201).json({ message: 'Success checkout product', carts, transaction, midtransToken })
     } catch (err) {
+      console.log(err);
       next(err)
     }
   }
@@ -160,10 +189,27 @@ class CustomerController {
       };
 
       const midtransToken = await snap.createTransaction(parameter)
-      console.log(midtransToken);
       res.status(201).json(midtransToken)
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  static async paid(req, res, next) {
+    try {
+      const { id } = req.params
+      const transaction = await Transaction.findByPk(id)
+      if (!transaction) throw { name: 'NotFound' }
+
+      await Transaction.update({ status: 'Paid' }, { where: { id } })
+      // await SizeProduct.update({})
+      const data = await TransactionProduct.findAll({ where: { TransactionId: id } })
+      console.log(data);
+
+      res.status(200).json({ message: 'Success paid', data })
+    } catch (err) {
+      console.log(err);
+      next(err)
     }
   }
 }

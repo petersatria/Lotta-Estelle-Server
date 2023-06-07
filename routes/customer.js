@@ -10,6 +10,6 @@ router
   .post('/transactions', CustomerController.checkout)
   .post('/generate-midtrans-token', CustomerController.generateMidtransToken)
   // .post('/carts/:ProductId')
-  .patch('/transactions/:id')
+  .patch('/transactions/:id', CustomerController.paid)
 
 module.exports = router

@@ -20,6 +20,8 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
+    size: DataTypes.STRING,
+    qty: DataTypes.STRING,
     ProductId: DataTypes.INTEGER,
     TransactionId: DataTypes.INTEGER
   }, {
