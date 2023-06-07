@@ -20,7 +20,7 @@ class AdminController {
   static async createProduct(req, res, next) {
     try {
       const { name, title, description, price, discount, categoryName } = req.body
-      const image = await cloudinary.uploader.upload(req.file.path)
+      const image = await cloudinary.uploader.upload(req.file.path, { quality: 60 })
       const data = await Product.create({
         name, title, description, price, discount: discount || 0, imgUrl: image.secure_url, categoryName
       })
