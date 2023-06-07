@@ -202,11 +202,20 @@ class CustomerController {
       if (!transaction) throw { name: 'NotFound' }
 
       await Transaction.update({ status: 'Paid' }, { where: { id } })
-      // await SizeProduct.update({})
       const data = await TransactionProduct.findAll({ where: { TransactionId: id } })
-      console.log(data);
+      // console.log(data);
+      let arr = []
+      data.forEach(e => {
+        let promise = SizeProduct.decrement('stock', { by: e.qty, where: { id: +e.size } })
+        arr.push(promise)
+      });
+      Promise.all(arr)
+        .then(result => {
+          console.log(result);
+          res.status(200).json({ message: 'Success paid', data })
+        })
+        .catch(err => { throw err })
 
-      res.status(200).json({ message: 'Success paid', data })
     } catch (err) {
       console.log(err);
       next(err)
