@@ -112,7 +112,6 @@ class CustomerController {
     try {
       const { id } = req.user
       const { carts } = req.body
-      console.log(carts);
 
       let totalPrice = 0
       carts.forEach(e => totalPrice += e.subtotal)
@@ -157,7 +156,6 @@ class CustomerController {
 
       res.status(201).json({ message: 'Success checkout product', carts, transaction, midtransToken })
     } catch (err) {
-      console.log(err);
       next(err)
     }
   }
@@ -193,7 +191,7 @@ class CustomerController {
       const midtransToken = await snap.createTransaction(parameter)
       res.status(201).json(midtransToken)
     } catch (err) {
-      console.log(err);
+      next(err)
     }
   }
 
@@ -205,7 +203,6 @@ class CustomerController {
 
       await Transaction.update({ status: 'Paid' }, { where: { id } })
       const data = await TransactionProduct.findAll({ where: { TransactionId: id } })
-      // console.log(data);
       let arr = []
       data.forEach(e => {
         let promise = SizeProduct.decrement('stock', { by: e.qty, where: { id: +e.size } })
@@ -213,7 +210,6 @@ class CustomerController {
       });
       Promise.all(arr)
         .then(result => {
-          console.log(result);
           res.status(200).json({ message: 'Success paid', data })
         })
         .catch(err => { throw err })
