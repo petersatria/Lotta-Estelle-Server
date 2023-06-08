@@ -15,6 +15,7 @@
 - GET /api/products/:id
 - POST /api/transactions
 - PATCH /api/transactions/:id
+- GET /api/transactions/
 
 # Endpoint Admin
 
@@ -202,7 +203,7 @@ OR
 
 - request body
 
-````json
+```json
 {
   "name": "praesent",
   "title": "praesent",
@@ -211,6 +212,7 @@ OR
   "price": 1000000,
   "categoryName": "Shirt"
 }
+```
 
 ### Response
 
@@ -220,13 +222,68 @@ OR
 {
   "message": "Success update product"
 }
-````
+```
 
 - Response (404) - Product not found
 
 ```json
 {
   "message": "Data is not found"
+}
+```
+
+## 5. POST /admin/products/size
+
+- Description : create new size for a product
+
+### Request
+
+- request body
+
+```json
+{
+  "size": "XL",
+  "stock": 5,
+  "ProdcutId": 1
+}
+```
+
+### Response
+
+- Response (201) - Success create new size
+
+```json
+{
+  "message": "Success update data",
+  "sizeProductId": 2,
+  "productId": 1
+}
+```
+
+## 6. PUT /admin/products/size/:id
+
+- Description : edit size product
+
+### Request
+
+- request body
+
+```json
+{
+  "size": "XL",
+  "stock": 10
+}
+```
+
+### Response
+
+- Response (201) - Success edit size product
+
+```json
+{
+  "message": "Success update data",
+  "sizeProductId": 1,
+  "productId": 1
 }
 ```
 
@@ -479,6 +536,61 @@ OR
   "transaction": {
     "id": 1
   }
+}
+```
+
+## 7. GET /api/transactions
+
+- Description : get transaction
+
+### Request
+
+- request headers
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlh"
+}
+```
+
+### Response
+
+- Response (201) - Success get transaction
+
+```json
+{
+    "message": "Success get data",
+    "data": [
+        {
+            "id": 2,
+            "date": "2023-06-08T02:30:24.410Z",
+            "status": "Paid",
+            "totalPrice": 967152,
+            "UserId": 1,
+            "createdAt": "2023-06-08T02:30:24.412Z",
+            "updatedAt": "2023-06-08T02:31:10.000Z",
+            "TransactionProducts": [
+                {
+                    "id": 2,
+                    "size": "35",
+                    "qty": "2",
+                    "ProductId": 13,
+                    "TransactionId": 2,
+                    "Product": {
+                        "id": 13,
+                        "name": "venenatis non",
+                        "title": "proin eu mi nulla ac enim in tempor turpis nec euismod scelerisque quam turpis adipiscing",
+                        "description": "Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.\n\nCras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+                        "price": 483576,
+                        "discount": 0,
+                        "imgUrl": "https://www.adidas.co.id/media/catalog/product/i/b/ib8388_2_apparel_photography_front20center20view_grey.jpg",
+                        "categoryName": "Tops"
+                    }
+                }
+            ]
+        },
+        ...
+    ]
 }
 ```
 
