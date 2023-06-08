@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { uploader, cloudinary } = require("../config/cloudinaryConfig");
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
@@ -227,6 +228,26 @@ class CustomerController {
       next(err)
     }
   }
+
+  static async histories(req, res, next) {
+    try {
+      const data = await Transaction.findAll({
+        where: { [Op.and]: [{ UserId: req.user.id }, { status: 'Paid' }] },
+        include: [{
+          model: TransactionProduct,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: [{
+            model: Product,
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          }],
+        }],
+      })
+      res.status(200).json({ message: 'Success get data', data })
+    } catch (err) {
+      next(err)
+    }
+  }
+
 }
 
 module.exports = CustomerController

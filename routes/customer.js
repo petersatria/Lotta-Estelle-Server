@@ -8,6 +8,7 @@ router
   .get('/products/:id', CustomerController.productById)
   .use(authentication)
   .post('/transactions', CustomerController.checkout)
+  .get('/transactions', CustomerController.histories)
   .post('/generate-midtrans-token', CustomerController.generateMidtransToken)
   // .post('/carts/:ProductId')
   .patch('/transactions/:id', CustomerController.paid)
